@@ -101,7 +101,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/x.$DOMAIN/privkey.pem;
 
     location /_matrix {
-        proxy_pass http://localhost:8008;
+        proxy_pass http://localhost:8448;
         proxy_set_header X-Forwarded-For \$remote_addr;
         proxy_set_header Host \$host;
     }
