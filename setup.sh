@@ -219,7 +219,7 @@ server {
     location / {
         #allow your_IP_address; #Allowed IP
         #deny all;
-        proxy_pass http://localhost:8088/;
+        proxy_pass http://localhost:8080/;
         proxy_set_header X-Forwarded-For \$remote_addr;
     }
 
