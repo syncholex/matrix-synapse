@@ -24,6 +24,8 @@ For Android: https://play.google.com/store/apps/details?id=im.vector.app&pli=1
 System requirements:
 Ubuntu 20.04
 
+Before starting the installation, you need to point your domain to your server's address in DNS. By default, the installation will require three subdomains: "x" "xweb" and "xadm" Alternatively, if you plan to use the domain only for Synapse, you can simply point "*"
+
 To install, log into your server via ssh and run the command as root:
 ```
 wget https://raw.githubusercontent.com/JustUnknownDude/matrix-synapse/main/setup.sh && bash setup.sh
