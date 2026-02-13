@@ -59,8 +59,8 @@ database:
 log_config: "/etc/matrix-synapse/log.yaml"
 media_store_path: /var/lib/matrix-synapse/media
 signing_key_path: "/etc/matrix-synapse/homeserver.signing.key"
-tls_certificate_path: "/etc/letsencrypt/live/x.$DOMAIN/fullchain.pem"
-tls_private_key_path: "/etc/letsencrypt/live/x.$DOMAIN/privkey.pem"
+tls_certificate_path: "/etc/matrix-synapse/ssl/fullchain.pem"
+tls_private_key_path: "/etc/matrix-synapse/ssl/privkey.pem"
 trusted_key_servers:
   - server_name: "x.$DOMAIN"
 suppress_key_server_warning: true
@@ -94,13 +94,17 @@ listen 80;
 EOF
 nginx -s reload
 certbot -n --nginx -d x.$DOMAIN --agree-tos -m  $EMAIL  --redirect
+install -d -o matrix-synapse -g matrix-synapse -m 0750 /etc/matrix-synapse/ssl
+install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.matrix.synchole.net/fullchain.pem /etc/matrix-synapse/ssl/fullchain.pem
+install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.matrix.synchole.net/privkey.pem   /etc/matrix-synapse/ssl/privkey.pem
+
 cat << EOF >> /etc/nginx/sites-enabled/x.conf
 server {
     listen 8448 ssl;
     server_name x.$DOMAIN;
 
-    ssl_certificate /etc/letsencrypt/live/x.$DOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/x.$DOMAIN/privkey.pem;
+    ssl_certificate /etc/matrix-synapse/ssl/fullchain.pem;
+    ssl_certificate_key /etc/matrix-synapse/ssl/privkey.pem;
 
     location /_matrix {
         proxy_pass http://localhost:8448;
@@ -276,6 +280,7 @@ nginx -s reload
 
 certbot -n --nginx -d xadm.$DOMAIN --agree-tos -m  $EMAIL  --redirect
 certbot -n --nginx -d xweb.$DOMAIN --agree-tos -m  $EMAIL  --redirect
+
 
 systemctl restart matrix-synapse.service
 echo "Done.\n"
