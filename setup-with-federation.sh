@@ -10,9 +10,11 @@ read -p "Enter your domain: " DOMAIN
 read -p "Enter your email for Certbot: " EMAIL
 read -p "Enter login for admin user: " ADMINUSER
 read -p "Enter password for admin user: " ADMINPASS
+#INSTALL UFW
+apt update && apt -y upgrade && apt -y install ufw
 #INSTALL MATRIX
 echo "INSTALL MATRIX.."
-apt-get update && apt -y install nginx
+apt-get update && apt -y install nginx 
 apt install -y python3-certbot-nginx
 apt install -y lsb-release wget apt-transport-https
 wget -O /usr/share/keyrings/matrix-org-archive-keyring.gpg https://packages.matrix.org/debian/matrix-org-archive-keyring.gpg
@@ -35,7 +37,7 @@ listeners:
     resources:
       - names: [client]
         compress: false
-- port: 8448
+  - port: 8448
     tls: true
     type: http
     x_forwarded: false
