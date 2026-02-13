@@ -10,6 +10,8 @@ read -p "Enter your domain: " DOMAIN
 read -p "Enter your email for Certbot: " EMAIL
 read -p "Enter login for admin user: " ADMINUSER
 read -p "Enter password for admin user: " ADMINPASS
+#INSTALL UFW
+apt-get update && apt -y install ufw
 #INSTALL MATRIX
 echo "INSTALL MATRIX.."
 apt-get update && apt -y install nginx
@@ -35,7 +37,7 @@ listeners:
     resources:
       - names: [client]
         compress: false
-- port: 8448
+  - port: 8448
     tls: true
     type: http
     x_forwarded: false
