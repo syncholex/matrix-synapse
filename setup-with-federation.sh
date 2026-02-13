@@ -132,6 +132,8 @@ apt install -y python3-psycopg2
 ufw allow 8448
 ufw allow https
 apt install -y coturn
+
+pkill nginx
 systemctl restart matrix-synapse.service
 
 register_new_matrix_user -u $ADMINUSER -p $ADMINPASS -a -c /etc/matrix-synapse/homeserver.yaml http://localhost:8008
