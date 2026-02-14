@@ -96,7 +96,7 @@ nginx -s reload
 certbot -n --nginx -d x.$DOMAIN --agree-tos -m  $EMAIL  --redirect
 install -d -o matrix-synapse -g matrix-synapse -m 0750 /etc/matrix-synapse/ssl
 install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.$DOMAIN/fullchain.pem /etc/matrix-synapse/ssl/fullchain.pem
-install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.#DOMAIN/privkey.pem   /etc/matrix-synapse/ssl/privkey.pem
+install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.$DOMAIN/privkey.pem   /etc/matrix-synapse/ssl/privkey.pem
 
 cat << EOF >> /etc/nginx/sites-enabled/x.conf
 server {
