@@ -35,15 +35,7 @@ listeners:
     x_forwarded: true
     bind_addresses: ['127.0.0.1']
     resources:
-      - names: [client]
-        compress: false
-  - port: 8448
-    tls: true
-    type: http
-    x_forwarded: false
-    bind_addresses: ['0.0.0.0']
-    resources:
-      - names: [federation]
+      - names: [client, federation]
         compress: false
 database:
   name: psycopg2
@@ -99,21 +91,21 @@ install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.$DOM
 install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.$DOMAIN/privkey.pem   /etc/matrix-synapse/ssl/privkey.pem
 
 
-#cat << EOF >> /etc/nginx/sites-enabled/x.conf
-#server {
-#    listen 8448 ssl;
-#    server_name x.$DOMAIN;
-#
-#    ssl_certificate /etc/matrix-synapse/ssl/fullchain.pem;
-#    ssl_certificate_key /etc/matrix-synapse/ssl/privkey.pem;
-#
-#    location /_matrix {
-#        proxy_pass http://localhost:8448;
-#        proxy_set_header X-Forwarded-For \$remote_addr;
-#        proxy_set_header Host \$host;
-#    }
-#}
-#EOF
+cat << EOF >> /etc/nginx/sites-enabled/x.conf
+server {
+    listen 8448 ssl;
+    server_name x.$DOMAIN;
+
+    ssl_certificate /etc/matrix-synapse/ssl/fullchain.pem;
+    ssl_certificate_key /etc/matrix-synapse/ssl/privkey.pem;
+
+    location /_matrix {
+        proxy_pass http://localhost:8008;
+        proxy_set_header X-Forwarded-For \$remote_addr;
+        proxy_set_header Host \$host;
+    }
+}
+EOF
 nginx -s reload
 systemctl start matrix-synapse
 echo "Done."
