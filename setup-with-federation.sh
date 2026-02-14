@@ -62,7 +62,7 @@ signing_key_path: "/etc/matrix-synapse/homeserver.signing.key"
 tls_certificate_path: "/etc/matrix-synapse/ssl/fullchain.pem"
 tls_private_key_path: "/etc/matrix-synapse/ssl/privkey.pem"
 trusted_key_servers:
-  - server_name: "x.$DOMAIN"
+  - server_name: "x$DOMAIN"
 suppress_key_server_warning: true
 max_upload_size: 100M
 enable_registration: false
@@ -71,11 +71,11 @@ matrix_synapse_federation_port_enabled: true
 registration_shared_secret: "$AUTHSECRET"
 search_all_users: true
 prefer_local_users: true
-turn_uris: ["turn:x.$DOMAIN?transport=udp","turn:x.$DOMAIN?transport=tcp"]
+turn_uris: ["turn:x$DOMAIN?transport=udp","turn:x$DOMAIN?transport=tcp"]
 turn_shared_secret: "$AUTHSECRET"
 turn_user_lifetime: 86400000
 admin_users:
-  - "@$ADMINUSER:x.$DOMAIN"
+  - "@$ADMINUSER:x$DOMAIN"
 
 EOF
 
@@ -83,7 +83,7 @@ systemctl enable matrix-synapse
 
 cat << EOF > /etc/nginx/sites-enabled/x.conf
 server {
-server_name x.$DOMAIN;
+server_name x$DOMAIN;
 location / {
 	proxy_pass http://localhost:8008;
 	proxy_set_header X-Forwarded-For \$remote_addr;
@@ -93,7 +93,7 @@ listen 80;
 }
 EOF
 nginx -s reload
-certbot -n --nginx -d x.$DOMAIN --agree-tos -m  $EMAIL  --redirect
+certbot -n --nginx -d x$DOMAIN --agree-tos -m  $EMAIL  --redirect
 install -d -o matrix-synapse -g matrix-synapse -m 0750 /etc/matrix-synapse/ssl
 install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.matrix.synchole.net/fullchain.pem /etc/matrix-synapse/ssl/fullchain.pem
 install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.matrix.synchole.net/privkey.pem   /etc/matrix-synapse/ssl/privkey.pem
@@ -101,7 +101,7 @@ install -o matrix-synapse -g matrix-synapse -m 0640 /etc/letsencrypt/live/x.matr
 cat << EOF >> /etc/nginx/sites-enabled/x.conf
 server {
     listen 8448 ssl;
-    server_name x.$DOMAIN;
+    server_name x$DOMAIN;
 
     ssl_certificate /etc/matrix-synapse/ssl/fullchain.pem;
     ssl_certificate_key /etc/matrix-synapse/ssl/privkey.pem;
@@ -150,7 +150,7 @@ fingerprint
 use-auth-secret
 static-auth-secret=$AUTHSECRET
 #Мы еге генерировали ранее во время настройки Matrix Synapse
-realm=x.$DOMAIN
+realm=x$DOMAIN
 # consider whether you want to limit the quota of relayed streams per user (or total) to avoid risk of DoS.
 user-quota=100 # 4 streams per video call, so 100 streams = 25 simultaneous relayed calls per user.
 total-quota=1200
@@ -173,8 +173,8 @@ cat << EOF > /opt/element-web/config.json
 {
     "default_server_config": {
         "m.homeserver": {
-            "base_url": "https://x.$DOMAIN",
-            "server_name": "x.$DOMAIN"
+            "base_url": "https://x$DOMAIN",
+            "server_name": "x$DOMAIN"
         },
         "m.identity_server": {
             "base_url": "https://vector.im"
@@ -205,7 +205,7 @@ cat << EOF > /opt/element-web/config.json
         "servers": ["$DOMAIN"]
     },
     "enable_presence_by_hs_url": {
-        "https://x.$DOMAIN": true
+        "https://x$DOMAIN": true
     },
     "terms_and_conditions_links": [
         {
@@ -237,7 +237,7 @@ services:
     build:
      context: .
      args:
-      - REACT_APP_SERVER="https://x.$DOMAIN"
+      - REACT_APP_SERVER="https://x$DOMAIN"
     ports:
       - "127.0.0.1:8080:80"
     restart: unless-stopped
@@ -249,7 +249,7 @@ cat << EOF > /etc/nginx/sites-enabled/xadm.conf
 server {
    listen 80;
    listen [::]:80;
-   server_name xadm.$DOMAIN;
+   server_name xadm$DOMAIN;
 
     location / {
         #allow your_IP_address; #Allowed IP
@@ -264,7 +264,7 @@ cat << EOF > /etc/nginx/sites-enabled/xweb.conf
 server {
         listen 80;
         listen [::]:80;
-    server_name xweb.$DOMAIN;
+    server_name xweb$DOMAIN;
 
     add_header X-Frame-Options SAMEORIGIN;
     add_header X-Content-Type-Options nosniff;
@@ -280,17 +280,17 @@ server {
 EOF
 nginx -s reload
 
-certbot -n --nginx -d xadm.$DOMAIN --agree-tos -m  $EMAIL  --redirect
-certbot -n --nginx -d xweb.$DOMAIN --agree-tos -m  $EMAIL  --redirect
+certbot -n --nginx -d xadm$DOMAIN --agree-tos -m  $EMAIL  --redirect
+certbot -n --nginx -d xweb$DOMAIN --agree-tos -m  $EMAIL  --redirect
 
 
 systemctl restart matrix-synapse.service
 echo "Done.\n"
 echo "-------------------------\n"
-echo "Admin panel: xadm.$DOMAIN\n"
-echo "Element web: xweb.$DOMAIN\n"
+echo "Admin panel: xadm$DOMAIN\n"
+echo "Element web: xweb$DOMAIN\n"
 echo "-------------------------\n"
-echo "Element server address: x.$DOMAIN\n"
+echo "Element server address: x$DOMAIN\n"
 echo "-------------------------\n"
 echo "Admin login: @$ADMINUSER\n"
 echo "Admin password: @$ADMINPASS\n"
